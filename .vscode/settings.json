@@ -7,5 +7,5 @@
   "files.autoSave": "off",
   "files.autoSaveDelay": 500,
   "editor.tabSize": 2,
-  "editor.rulers": [18]
+  "editor.rulers": [20]
 }
