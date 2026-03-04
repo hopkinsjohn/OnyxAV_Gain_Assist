@@ -2,7 +2,7 @@
 
 
 -- RUNTIME CODE input pin (comment this out when runtime has been added to this plugin)
-table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = true,PinStyle = "Input",Count = 1})
+--table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = true,PinStyle = "Input",Count = 1})
 
 -----------------------------------------------------
 -------------------- Variables ----------------------
@@ -20,6 +20,29 @@ end
 -----------------------------------------------------
 -------------------- Controls -----------------------
 -----------------------------------------------------
+
+------------------------------- logo trigger
+table.insert(ctrls, {
+  Name              = "Logo",
+  ControlType       = "Button",
+  ButtonType        = "Trigger",
+  UserPin           = true,
+  PinStyle          = "Output",
+  IconType          = "Image",
+  Icon              = "--[[ #encode "logo.png" ]]"
+})
+------------------------------- Text Timeout
+table.insert(ctrls, {
+  Name              = "Text Override Time",
+  ControlType       = "Knob", 
+  ControlUnit       = "Integer",
+  Min               = 2,
+  Max               = 10,
+  Count             = 1,
+  DefaultValue      = 3,
+  UserPin           = true,
+  PinStyle          = "Both",
+})
 
 for i = 1, iMaxGains do
   ------------------------------- gain index
@@ -103,10 +126,116 @@ for i = 1, iMaxGains do
     ControlType     = "Button",
     ButtonType      = "StateTrigger",
     Min             = 1,
-    Max             = 4,
+    Max             = props["Mute State Trigger Max Val"].Value,
+    UserPin         = true,
+    PinStyle        = "Input",
+  })
+  ------------------------------- mute state trigger value
+  table.insert(ctrls, {             
+    Name            = "Gain "..i.." Mute State Trigger Value",
+    ControlType     = "Indicator",
+    IndicatorType   = "Text",
+    UserPin         = false,
+  }) 
+  ------------------------------- phantom power toggle
+  table.insert(ctrls, {
+    Name            = "Gain "..i.." Preamp Phantom Power Toggle",
+    ControlType     = "Button",
+    ButtonType      = "Toggle",
     UserPin         = true,
     PinStyle        = "Both",
   })
+  ------------------------------- phantom power on led
+  table.insert(ctrls, {             
+    Name            = "Gain "..i.." Preamp Phantom Active",
+    ControlType     = "Indicator",
+    IndicatorType   = "Led",
+    UserPin         = false,
+  }) 
+  for k = 1,3 do
+    ------------------------------- feedback display
+    table.insert(ctrls, {             
+      Name          = "Gain "..i.." Display "..k,
+      ControlType   = "Indicator",
+      IndicatorType = "Text",
+      UserPin       = true,
+      PinStyle      = "Output",
+    }) 
+    ------------------------------- feedback display override
+    table.insert(ctrls, {
+      Name          = "Gain "..i.." Display Override "..k,
+      ControlType   = "Button",
+      ButtonType    = "Toggle",
+      UserPin       = true,
+      PinStyle      = "Both",
+      IconType      = "Icon",
+      Icon          = "Quote",
+    })
+
+  end
+
+
+
+
+
+  -------------------------------------------------------------------------- setup page
+  ------------------------------- component name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Component Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- gain control name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Gain Control Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- mute control name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Mute Control Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- phantom control name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Phantom Control Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  for k = 1,3 do
+
+    ------------------------------- preamp presets
+    table.insert(ctrls, {
+      Name          = "Gain "..i.." Preamp Preset "..k,
+      ControlType   = "Button",
+      ButtonType    = "Toggle",
+      UserPin       = true,
+      PinStyle      = "Both",
+    })
+    ------------------------------- preamp preset names
+    table.insert(ctrls, {             
+      Name          = "Gain "..i.." Preamp Preset Name "..k,
+      ControlType   = "Text",
+      UserPin       = true,
+      PinStyle      = "Both",
+    })
+    ------------------------------- gain fader
+    table.insert(ctrls, {             
+      Name          = "Gain "..i.." Preamp Preset Value "..k,
+      ControlType   = "Knob",
+      ControlUnit   = "dB",
+      Min           = 0,
+      Max           = 100,
+      UserPin       = true,
+      PinStyle      = "Both",
+    })
+  end
+
 
 
 end
