@@ -1,6 +1,6 @@
 # OnyxAV Gain Assist
 
-This is a template plugin that you can download with some pre-written Lua code to get you started.
+v2 Test
 
 ## PluginCompile
 
