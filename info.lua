@@ -1,8 +1,8 @@
 PluginInfo = {
-  Name = "OnyxAV~Gain Assist",
-  Version = "1.0",
-  BuildVersion = "0.0.0.181",
-  Id = "3ab371d4-87ee-4b6b-9c6f-bd99203a0851",
+  Name = "OnyxAV~Gain Assist v2",
+  Version = "2.0",
+  BuildVersion = "0.0.0.40",
+  Id = "84b36ad0-6c7a-4e9f-be8a-b185e0461da2",
   Author = "jhopkins",
-  Description = "OnyxAV Gain Assist"  
+  Description = "OnyxAV Gain Assist v2"  
 }

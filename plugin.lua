@@ -12,7 +12,7 @@ end
 
 -- The name that will initially display when dragged into a design
 function GetPrettyName(props)
-  return "Gain Assist v2, version " .. PluginInfo.Version
+  return "Gain Assist v2, version " .. PluginInfo.BuildVersion
 end
 
 -- Optional function used if plugin has multiple pages

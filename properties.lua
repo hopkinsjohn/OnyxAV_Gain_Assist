@@ -33,6 +33,16 @@ for i = 1, maximumsize do
     Value = -100,  
   })
   table.insert(props, {
+    Name = "Link Mute "..i,
+    Type = "boolean",
+    Value = true,
+  })
+  table.insert(props, {
+    Name = "Show Meter "..i,
+    Type = "boolean",
+    Value = false,
+  })
+  table.insert(props, {
     Name = "Preamp Controls "..i,
     Type = "boolean",
     Value = false,

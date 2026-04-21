@@ -2,7 +2,7 @@
 
 
 -- RUNTIME CODE input pin (comment this out when runtime has been added to this plugin)
---table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = true,PinStyle = "Input",Count = 1})
+table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = false,PinStyle = "Input",Count = 1})
 
 -----------------------------------------------------
 -------------------- Variables ----------------------
@@ -137,6 +137,14 @@ for i = 1, iMaxGains do
     IndicatorType   = "Text",
     UserPin         = false,
   }) 
+  ------------------------------- meter
+  table.insert(ctrls, {             
+    Name            = "Gain "..i.." Meter",
+    ControlType     = "Indicator",
+    IndicatorType   = "Meter",
+    UserPin         = false,
+    PinStyle        = "Input"
+  }) 
   ------------------------------- phantom power toggle
   table.insert(ctrls, {
     Name            = "Gain "..i.." Preamp Phantom Power Toggle",
@@ -171,17 +179,50 @@ for i = 1, iMaxGains do
       IconType      = "Icon",
       Icon          = "Quote",
     })
-
   end
+  ------------------------------- Invisible toggle
+  table.insert(ctrls, {
+    Name            = "Gain "..i.." Invisible",
+    ControlType     = "Button",
+    ButtonType      = "Toggle",
+    UserPin         = true,
+    PinStyle        = "Both",
+    IconType        = "Icon",
+    Icon            = "Eye",
+  })
+  ------------------------------- disable toggle
+  table.insert(ctrls, {
+    Name            = "Gain "..i.." Disable",
+    ControlType     = "Button",
+    ButtonType      = "Toggle",
+    UserPin         = true,
+    PinStyle        = "Both",
+    IconType        = "Icon",
+    Icon            = "Minus Circle",
+  })
 
 
 
 
 
   -------------------------------------------------------------------------- setup page
-  ------------------------------- component name
+  ------------------------------- Gain Code name
   table.insert(ctrls, {             
-    Name            = "Component "..i.." Component Name",
+    Name            = "Component "..i.." Gain Code Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- Mute Code name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Mute Code Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- Preamp Code name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Preamp Code Name",
     ControlType     = "Text",
     UserPin         = true,
     PinStyle        = "Both",
@@ -200,6 +241,13 @@ for i = 1, iMaxGains do
     UserPin         = true,
     PinStyle        = "Both",
   })
+  ------------------------------- preamp control name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Preamp Control Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
   ------------------------------- phantom control name
   table.insert(ctrls, {             
     Name            = "Component "..i.." Phantom Control Name",
@@ -208,7 +256,6 @@ for i = 1, iMaxGains do
     PinStyle        = "Both",
   })
   for k = 1,3 do
-
     ------------------------------- preamp presets
     table.insert(ctrls, {
       Name          = "Gain "..i.." Preamp Preset "..k,

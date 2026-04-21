@@ -1,6 +1,6 @@
 
 -- RUNTIME CODE input pin (comment this out when runtime has been added to this plugin)
---layout["code"]={PrettyName="code",Style="None"}
+layout["code"]={PrettyName="code",Style="None"}
 
 -----------------------------------------------------
 -------------------- Variables ----------------------
@@ -42,10 +42,10 @@ if CurrentPage == "Control" then
     StrokeColor     = GroupBoxStrokeColor,
     StrokeWidth     = 1,
     Position        = {0,0},
-    Size            = {PositionStartX + StandardWidth + (iMaxGains*StandardWidth) + 60, ShowPreamp and 484 or 411},
-    ZOrder          = -1000,
+    Size            = {PositionStartX + StandardWidth + (iMaxGains*StandardWidth) + 60, ShowPreamp and 500 or 420},
+    ZOrder          = -100000,
   })  
-  PositionStartY    = PositionStartY + StandardHeight
+  PositionStartY    = PositionStartY + StandardHeight*2
   --------------------------- Text - Friendly Name
   table.insert(graphics,{
     Type            = "Label",
@@ -59,7 +59,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -900,
+    ZOrder          = -99999,
   })
   PositionStartY    = PositionStartY + 40
   --------------------------- Text - Fader
@@ -75,7 +75,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -901,
+    ZOrder          = -99998,
   })
   PositionStartY    = PositionStartY + FaderHeight
   --------------------------- Text - Gain Bump
@@ -91,7 +91,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -902,
+    ZOrder          = -99997,
   })
   PositionStartY    = PositionStartY + StandardHeight
   --------------------------- Text - Mute Toggle
@@ -107,7 +107,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -903,
+    ZOrder          = -99996,
   })
   PositionStartY    = PositionStartY + StandardHeight
   --------------------------- Text - Mute State Trigger
@@ -123,7 +123,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -904,
+    ZOrder          = -99995,
   })
   PositionStartY    = PositionStartY + StandardHeight
   --------------------------- Text - dB Display
@@ -139,7 +139,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -905,
+    ZOrder          = -99994,
   })
   PositionStartY    = PositionStartY + StandardHeight
   --------------------------- Text - % Display
@@ -155,7 +155,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -906,
+    ZOrder          = -99993,
   })
   PositionStartY    = PositionStartY + StandardHeight
   --------------------------- Text - 0-100 Display
@@ -171,7 +171,7 @@ if CurrentPage == "Control" then
     Color           = ColorSilver,
     HTextAlign      = "Right",
     VTextAlign      = "Center",
-    ZOrder          = -907,
+    ZOrder          = -99992,
   })
   PositionStartY    = PositionStartY + StandardHeight
   if ShowPreamp then
@@ -188,7 +188,7 @@ if CurrentPage == "Control" then
       Color           = ColorSilver,
       HTextAlign      = "Right",
       VTextAlign      = "Center",
-      ZOrder          = -908,
+      ZOrder          = -99991,
     })
     PositionStartY    = PositionStartY + StandardHeight
     --------------------------- Text - Preamp Presets
@@ -204,7 +204,7 @@ if CurrentPage == "Control" then
       Color           = ColorSilver,
       HTextAlign      = "Right",
       VTextAlign      = "Center",
-      ZOrder          = -909,
+      ZOrder          = -99990,
     })
 
   end
@@ -223,7 +223,7 @@ if CurrentPage == "Control" then
     ButtonVisualStyle = "Flat",
     UnlinkOffColor  = true,
     Padding         = 2,
-    ZOrder          = -910,
+    ZOrder          = -99989,
   }
   
   for i = 1, iMaxGains do
@@ -231,6 +231,7 @@ if CurrentPage == "Control" then
     PositionStartX = PositionStartX + StandardWidth
     PositionStartY = 8
     local DiscreetHasPreamp = props["Preamp Controls "..i].Value == true
+    local DiscreetHasMeter = props["Show Meter "..i].Value == true
     --------------------------- Label - channel index
     layout["Gain "..i.." Index"] = { 
       PrettyName    = "Gain "..i.." Index",
@@ -245,7 +246,43 @@ if CurrentPage == "Control" then
       TextColor     = ColorGreen,
       HTextAlign    = "Center",
       IsReadOnly    = true,
-      ZOrder        = -800,
+      ZOrder        = -99900 - i,
+    }
+    PositionStartY = PositionStartY + StandardHeight
+    --------------------------- Invisible Toggle
+    layout["Gain "..i.." Invisible"] = {
+      PrettyName    = string.format("Gain %i~Visible",i),
+      Style         = "Button",
+      Position      = {PositionStartX , PositionStartY},
+      Size          = {StandardWidth/2 , StandardHeight},
+      Margin        = 1,
+      CornerRadius  = 4,
+      StrokeWidth   = 0,
+      Font          = TextFont,
+      FontStyle     = TextFontStyle,
+      Color         = ColorRed,
+      OffColor      = GroupBoxFillColor,
+      ButtonVisualStyle = "Flat",
+      UnlinkOffColor = true,
+      ZOrder        = -95900 - i,
+    }
+    --------------------------- Disable Toggle
+    layout["Gain "..i.." Disable"] = {
+      PrettyName    = string.format("Gain %i~Disable",i),
+      Style         = "Button",
+      Position      = {PositionStartX + StandardWidth/2 , PositionStartY},
+      Size          = {StandardWidth/2 , StandardHeight},
+      Margin        = 1,
+      CornerRadius  = 4,
+      StrokeWidth   = 0,
+      Font          = TextFont,
+      FontStyle     = TextFontStyle,
+      Color         = ColorRed,
+      OffColor      = GroupBoxFillColor,
+      ButtonVisualStyle = "Flat",
+      UnlinkOffColor = true,
+      Padding       = 2,
+      ZOrder        = -95800 - i,
     }
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- gain friendly names
@@ -262,7 +299,7 @@ if CurrentPage == "Control" then
       Margin        = 0,
       HTextAlign    = "Center",
       IsReadOnly    = false,
-      ZOrder        = -801,
+      ZOrder        = -99800 - i,
     }
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- gain friendly names display
@@ -280,7 +317,7 @@ if CurrentPage == "Control" then
       Margin        = 0,
       HTextAlign    = "Center",
       IsReadOnly    = true,
-      ZOrder        = -802,
+      ZOrder        = -99700 - i,
     }
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- gain faders
@@ -292,6 +329,22 @@ if CurrentPage == "Control" then
       Color         = ColorGreen,
       ZOrder        = i,
     }
+    --------------------------- meter
+    if DiscreetHasMeter then
+      layout["Gain "..i.." Meter"] = { 
+        PrettyName    = string.format("Gain %i~Meter",i),
+        Style         = "Meter",
+        MeterStyle    = "Standard",
+        Radius        = 3,
+        ShowTextbox   = false,
+        BackgroundColor  = GroupBoxFillColor,
+        StrokeColor   = ColorButtonOff,
+        StrokeWidth   = 1,
+        Position      = {PositionStartX + 55 , PositionStartY + 20},
+        Size          = {StandardWidth - 52 , FaderHeight-40},
+        ZOrder        = -99600 - i,
+      }
+    end
     --------------------------- Label - Max Gain Display
     layout["Gain "..i.." Display Max"] = { 
       PrettyName    = string.format("Gain %i~Gain~Max dB",i),
@@ -306,7 +359,7 @@ if CurrentPage == "Control" then
       TextColor     = ColorButtonOff,
       HTextAlign    = "Center",
       IsReadOnly    = true,
-      ZOrder        = -700 + i,
+      ZOrder        = -99500 - i,
     }
     PositionStartY = PositionStartY + FaderHeight
     --------------------------- Label - Min Gain Display
@@ -323,7 +376,7 @@ if CurrentPage == "Control" then
       TextColor     = ColorButtonOff,
       HTextAlign    = "Center",
       IsReadOnly    = true,
-      ZOrder        = -750 + i,
+      ZOrder        = -99400 - i,
     }
     --------------------------- Gain Bump Up
     layout["Gain "..i.." Bump Up"] = {
@@ -342,7 +395,7 @@ if CurrentPage == "Control" then
       UnlinkOffColor = true,
       Padding       = 2,
       IconColor     = ColorGreen,
-      ZOrder        = -650 + i,
+      ZOrder        = -99300 - i,
     }
     --------------------------- Gain Bump Down
     layout["Gain "..i.." Bump Down"] = {
@@ -361,7 +414,7 @@ if CurrentPage == "Control" then
       UnlinkOffColor = true,
       Padding       = 2,
       IconColor     = ColorGreen,
-      ZOrder        = -600 + i,
+      ZOrder        = -99200 - i,
     }
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- Mute Toggle
@@ -379,7 +432,7 @@ if CurrentPage == "Control" then
       OffColor      = ColorButtonOff,
       ButtonVisualStyle = "Flat",
       UnlinkOffColor = true,
-      ZOrder        = -550 + i,
+      ZOrder        = -99100 - i,
     }
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- Mute State Trigger
@@ -397,7 +450,7 @@ if CurrentPage == "Control" then
       OffColor      = ColorButtonOff,
       ButtonVisualStyle = "Flat",
       UnlinkOffColor = true,
-      ZOrder        = -500 + i,
+      ZOrder        = -98900 - i,
     }
     --------------------------- Mute State Trigger Value
     layout["Gain "..i.." Mute State Trigger Value"] = {
@@ -413,7 +466,7 @@ if CurrentPage == "Control" then
       TextColor     = ColorGreen,
       HTextAlign    = "Center",
       IsReadOnly    = true,
-      ZOrder        = -450 + i,
+      ZOrder        = -98800 - i,
     }
     local displayName = {"dB","%","0-100"}
     for k = 1, 3 do
@@ -432,7 +485,7 @@ if CurrentPage == "Control" then
         Margin        = 1,
         HTextAlign    = "Center",
         IsReadOnly    = false,
-        ZOrder        = -400 + i + k,
+        ZOrder        = -98700 - i - k,
       }
       --------------------------- feedback display override
       layout["Gain "..i.." Display Override "..k] = {
@@ -451,7 +504,7 @@ if CurrentPage == "Control" then
         ButtonVisualStyle = "Flat",
         UnlinkOffColor = true,
         IconColor     = {255,255,255},
-        ZOrder        = -350 + i + k,
+        ZOrder        = -98600 - i - k,
       }
     end
     PositionStartY = PositionStartY + StandardHeight
@@ -470,7 +523,7 @@ if CurrentPage == "Control" then
         Color         = {242,137,174},
         ButtonVisualStyle = "Flat",
         UnlinkOffColor = false,
-        ZOrder        = -250 + i,
+        ZOrder        = -98500 - i,
       }
       --------------------------- Phantom Power active led
       layout["Gain "..i.." Preamp Phantom Active"] = {
@@ -483,7 +536,7 @@ if CurrentPage == "Control" then
         Color         = {242,137,174},
         OffColor      = {242,137,174},
         UnlinkOffColor = true,
-        ZOrder        = -200 + i,
+        ZOrder        = -98400 - i,
       }
       PositionStartY = PositionStartY + StandardHeight
       for k = 1, 3 do
@@ -502,22 +555,88 @@ if CurrentPage == "Control" then
           OffColor      = ColorButtonOff,
           ButtonVisualStyle = "Flat",
           UnlinkOffColor = true,
-          ZOrder        = -300 + i + k,
+          ZOrder        = -98300 - i - k,
         }
 
       end
-
     end
-
-    
-
   end
 
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+-------------------------------------- SETUP PAGE  -----------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
 elseif CurrentPage == "Setup" then
-  -- initiate some variables
-  PositionStartY    = 25
-  PositionStartX    = 44
+  -- PositionStartX and PositionStartX mapping
+  local catchPreampStack = {false,false,false,false}
+  local posXMap = {86, 214, 342, 470, 598, 726}
+  local posYMap = {13, 73, 133, 193}
+  local sum = 0 
+  for i = 1, iMaxGains do 
+    if i <= 6 and props["Preamp Controls "..i].Value == true then
+      catchPreampStack[1] = true
+    elseif i <= 12 and props["Preamp Controls "..i].Value == true then
+      catchPreampStack[2] = true
+    elseif i <= 18 and props["Preamp Controls "..i].Value == true then
+      catchPreampStack[3] = true
+    elseif i <= iMaxGains and props["Preamp Controls "..i].Value == true then
+      catchPreampStack[4] = true
+    end
+  end
+  -- determine the posYMap based on which rows are using preamp controls
+  -------------------------------- row 2
+  if catchPreampStack[1] then
+    posYMap[2] = 173 
+  end
+  -------------------------------- row 3
+  for i = 1,2 do 
+    if catchPreampStack[i] == true then
+      sum = sum + 1
+    end
+  end
+  if sum == 1 then
+    posYMap[3] = 233
+  elseif sum == 2 then
+    posYMap[3] = 333
+  end
+  sum = 0
+  -------------------------------- row 4
+  for i = 1,3 do 
+    if catchPreampStack[i] == true then
+      sum = sum + 1
+    end
+  end
+  if sum == 1 then
+    posYMap[4] = 293
+  elseif sum == 2 then
+    posYMap[4] = 393
+  elseif sum == 3 then
+    posYMap[4] = 493
+  end
+  sum = nil
+  -- determine groupbox background size
+  local GroupboxHeight = catchPreampStack[4] and (posYMap[4] + StandardHeight*9) or (posYMap[4] + StandardHeight*4)
+  local GroupboxWidth = 958
+  if iMaxGains < 2 then 
+    GroupboxWidth = 318
+  elseif iMaxGains < 3 then 
+    GroupboxWidth = 446
+  elseif iMaxGains < 4 then 
+    GroupboxWidth = 574
+  elseif iMaxGains < 5 then 
+    GroupboxWidth = 702
+  elseif iMaxGains < 6 then 
+    GroupboxWidth = 830
+  end
+  if iMaxGains < 7 then 
+    GroupboxHeight = catchPreampStack[1] and (posYMap[1] + StandardHeight*9) or (posYMap[1] + StandardHeight*4)
+  elseif iMaxGains < 13 then 
+    GroupboxHeight = catchPreampStack[2] and (posYMap[2] + StandardHeight*9) or (posYMap[2] + StandardHeight*4)
+  elseif iMaxGains < 19 then 
+    GroupboxHeight = catchPreampStack[3] and (posYMap[3] + StandardHeight*9) or (posYMap[3] + StandardHeight*4)
+  end
   --------------------------- background groupbox
   table.insert(graphics,{
     Type            = "GroupBox",
@@ -526,187 +645,15 @@ elseif CurrentPage == "Setup" then
     StrokeColor     = GroupBoxStrokeColor,
     StrokeWidth     = 1,
     Position        = {0,0},
-    Size            = {ShowPreamp and 965 or 568 , PositionStartY + (iMaxGains*StandardHeight) + 60},
-    ZOrder          = -2000,
+    Size            = {GroupboxWidth,GroupboxHeight},
+    ZOrder          = -80000,
   })
-  --------------------------- Text - Component
-  table.insert(graphics,{
-    Type            = "Label",
-    Text            = "Component",
-    Position        = {PositionStartX , PositionStartY},
-    Size            = {120 , StandardHeight},
-    FontSize        = 11,
-    Margin          = 0,
-    Font            = TextFont,
-    FontStyle       = "Light",
-    Color           = ColorSilver,
-    HTextAlign      = "Center",
-    VTextAlign      = "Center",
-    ZOrder          = -1900,
-  })
-  PositionStartX = PositionStartX + 123
-  --------------------------- Text - Gain Control
-  table.insert(graphics,{
-    Type            = "Label",
-    Text            = "Gain Control",
-    Position        = {PositionStartX , PositionStartY},
-    Size            = {120 , StandardHeight},
-    FontSize        = 11,
-    Margin          = 0,
-    Font            = TextFont,
-    FontStyle       = "Light",
-    Color           = ColorSilver,
-    HTextAlign      = "Center",
-    VTextAlign      = "Center",
-    ZOrder          = -1901,
-  })
-  PositionStartX = PositionStartX + 123
-  --------------------------- Text - Mute Control
-  table.insert(graphics,{
-    Type            = "Label",
-    Text            = "Mute Control",
-    Position        = {PositionStartX , PositionStartY},
-    Size            = {120 , StandardHeight},
-    FontSize        = 11,
-    Margin          = 0,
-    Font            = TextFont,
-    FontStyle       = "Light",
-    Color           = ColorSilver,
-    HTextAlign      = "Center",
-    VTextAlign      = "Center",
-    ZOrder          = -1902,
-  })
-  if ShowPreamp then
-    PositionStartX = PositionStartX + 123
-    --------------------------- Text - Phantom Control
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "Phantom Control",
-      Position      = {PositionStartX , PositionStartY},
-      Size          = {120 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1903,
-    })
-    PositionStartX = PositionStartX + 123
-    --------------------------- Header - Preamp Presets
-    table.insert(graphics,{
-      Type          = "Header",
-      Text          = "Preamp Presets",
-      Position      = {PositionStartX , PositionStartY - StandardHeight},
-      Size          = {300 , StandardHeight},
-      FontSize      = 11,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-    ZOrder          = -1904,
-    })
-    --------------------------- Text - Preset 1 Name
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "1 : Name",
-      Position      = {PositionStartX , PositionStartY},
-      Size          = {64 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1905,
-    })
-    --------------------------- Text - Preset 1 dB
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "dB",
-      Position      = {PositionStartX + 64 , PositionStartY},
-      Size          = {36 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1906,
-    })
-    --------------------------- Text - Preset 2 Name
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "2 : Name",
-      Position      = {PositionStartX + 100 , PositionStartY},
-      Size          = {64 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1907,
-    })
-    --------------------------- Text - Preset 2 dB
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "dB",
-      Position      = {PositionStartX + 164 , PositionStartY},
-      Size          = {36 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1908,
-    })
-    --------------------------- Text - Preset 3 Name
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "3 : Name",
-      Position      = {PositionStartX + 200 , PositionStartY},
-      Size          = {64 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1909,
-    })
-    --------------------------- Text - Preset 3 dB
-    table.insert(graphics,{
-      Type          = "Label",
-      Text          = "dB",
-      Position      = {PositionStartX + 264 , PositionStartY},
-      Size          = {36 , StandardHeight},
-      FontSize      = 11,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = "Light",
-      Color         = ColorSilver,
-      HTextAlign    = "Center",
-      VTextAlign    = "Center",
-    ZOrder          = -1910,
-    })
-    PositionStartX = PositionStartX + 300
-  else
-    PositionStartX = PositionStartX + 150
-  end
   --------------------------- Text - Text Timeout
   table.insert(graphics,{
     Type            = "Label",
     Text            = "Text Timeout",
-    Position        = {PositionStartX , PositionStartY},
-    Size            = {120 , StandardHeight},
+    Position        = {GroupboxWidth - 94,posYMap[1]},
+    Size            = {94 , StandardHeight},
     FontSize        = 11,
     Margin          = 0,
     Font            = TextFont,
@@ -714,64 +661,150 @@ elseif CurrentPage == "Setup" then
     Color           = ColorSilver,
     HTextAlign      = "Center",
     VTextAlign      = "Center",
-    ZOrder          = -1911,
+    ZOrder          = -79999,
   })
   --------------------------- Knob - Text Override Time
   layout["Text Override Time"] = {
     PrettyName      = "Text Override Time",
     Style           = "Knob",
-    Position        = {PositionStartX + 42 , PositionStartY + StandardHeight + 8},
+    Position        = {GroupboxWidth - 65,posYMap[1] + StandardHeight},
     Size            = {36,36},
     Color           = ColorGreen,
-    ZOrder          = -1912,
+    ZOrder          = -79998,
   }
   
   
   for i = 1, iMaxGains do
-    -- iterate some variables
-    PositionStartY  = PositionStartY + StandardHeight
-    PositionStartX  = 25
+    if i < 7 then
+      PositionStartY = posYMap[1]
+      PositionStartX = posXMap[i]
+    elseif i < 13 then
+      PositionStartY = posYMap[2]
+      PositionStartX = posXMap[i - 6]
+    elseif i < 19 then
+      PositionStartY = posYMap[3]
+      PositionStartX = posXMap[i - 12]
+    else
+      PositionStartY = posYMap[4]
+      PositionStartX = posXMap[i - 18]
+    end
     local DiscreetHasPreamp = props["Preamp Controls "..i].Value == true
-    --------------------------- Label - channel index
-    layout["Gain "..i.." Index"] = { 
-      PrettyName    = "Gain "..i.." Index",
-      Style         = "Text",
-      TextBoxStyle  = "NoBackground",
+    local DiscreetMuteComponent = props["Link Mute "..i].Value == false
+
+    -- left hand text
+    if i == 1 or i == 7 or i == 13 or i == 19 then
+      local Ycoord = {
+        [1] = 33,
+        [7] = posYMap[2] + StandardHeight,
+        [13] = posYMap[3] + StandardHeight,
+        [19] = posYMap[4] + StandardHeight,
+      }
+      local PreampGroup = {
+        [1] = catchPreampStack[1],
+        [7] = catchPreampStack[2],
+        [13] = catchPreampStack[3],
+        [19] = catchPreampStack[4],
+      }
+      --------------------------- Text - Gain
+      table.insert(graphics,{
+        Type            = "Label",
+        Text            = "Gain",
+        Position        = {posXMap[1] - 80, Ycoord[i]},
+        Size            = {76 , StandardHeight},
+        FontSize        = 8,
+        Margin          = 0,
+        Font            = TextFont,
+        FontStyle       = "Light",
+        Color           = ColorSilver,
+        HTextAlign      = "Right",
+        VTextAlign      = "Center",
+        ZOrder          = -46900 - i,
+      })
+      --------------------------- Text - Mute
+      table.insert(graphics,{
+        Type            = "Label",
+        Text            = "Mute",
+        Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight},
+        Size            = {76 , StandardHeight},
+        FontSize        = 8,
+        Margin          = 0,
+        Font            = TextFont,
+        FontStyle       = "Light",
+        Color           = ColorSilver,
+        HTextAlign      = "Right",
+        VTextAlign      = "Center",
+        ZOrder          = -46800 - i,
+      })
+      if PreampGroup[i] then
+        --------------------------- Text - Preamp Gain
+        table.insert(graphics,{
+          Type            = "Label",
+          Text            = "Preamp Gain",
+          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*2},
+          Size            = {76 , StandardHeight},
+          FontSize        = 8,
+          Margin          = 0,
+          Font            = TextFont,
+          FontStyle       = "Light",
+          Color           = ColorSilver,
+          HTextAlign      = "Right",
+          VTextAlign      = "Center",
+          ZOrder          = -46700 - i,
+        })
+        --------------------------- Text - Preamp Phantom
+        table.insert(graphics,{
+          Type            = "Label",
+          Text            = "Preamp Phantom",
+          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*3},
+          Size            = {76 , StandardHeight},
+          FontSize        = 8,
+          Margin          = 0,
+          Font            = TextFont,
+          FontStyle       = "Light",
+          Color           = ColorSilver,
+          HTextAlign      = "Right",
+          VTextAlign      = "Center",
+          ZOrder          = -46600 - i,
+        })
+        --------------------------- Text - Preamp Presets
+        table.insert(graphics,{
+          Type            = "Label",
+          Text            = "Preamp Presets",
+          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*4},
+          Size            = {76 , StandardHeight*3},
+          FontSize        = 8,
+          Margin          = 0,
+          Font            = TextFont,
+          FontStyle       = "Light",
+          Color           = ColorSilver,
+          HTextAlign      = "Right",
+          VTextAlign      = "Center",
+          ZOrder          = -46500 - i,
+        })
+      end
+    end
+
+
+    --------------------------- Header - Gain Index
+    table.insert(graphics,{
+      Type          = "Header",
+      Text          = "Gain "..i,
       Position      = {PositionStartX , PositionStartY},
-      Size          = {16 , StandardHeight},
-      FontSize      = 9,
-      Margin        = 0,
-      Font          = TextFont,
-      FontStyle     = TextFontStyle,
-      TextColor     = ColorGreen,
-      HTextAlign    = "Right",
-      IsReadOnly    = true,
-      ZOrder        = -1800 + i,
-    }
-    PositionStartX = PositionStartX + 19
-    --------------------------- component name
-    layout["Component "..i.." Component Name"] = { 
-      PrettyName    = string.format("Gain %i~Component~Code Name",i),
-      Style         = "Text",
-      Position      = {PositionStartX, PositionStartY},
       Size          = {120 , StandardHeight},
-      Color         = {255,255,255},
-      FontSize      = 9,
+      FontSize      = 11,
       Font          = TextFont,
-      FontStyle     = TextFontStyle,
-      TextColor     = ColorBlack,
-      Margin        = 0,
+      FontStyle     = "Light",
+      Color         = ColorSilver,
       HTextAlign    = "Center",
-      IsReadOnly    = false,
-      ZOrder        = -1750 + i,
-    }
-    PositionStartX = PositionStartX + 123
-    --------------------------- gain control name
-    layout["Component "..i.." Gain Control Name"] = { 
-      PrettyName    = string.format("Gain %i~Component~Gain Control Name",i),
+      ZOrder        = -79900 - i,
+    })
+    PositionStartY  = PositionStartY + StandardHeight
+    --------------------------- Gain Code name
+    layout["Component "..i.." Gain Code Name"] = { 
+      PrettyName    = string.format("Gain %i~Component~Gain Code Name",i),
       Style         = "ComboBox",
       Position      = {PositionStartX, PositionStartY},
-      Size          = {120 , StandardHeight},
+      Size          = {60 , DiscreetMuteComponent and StandardHeight or StandardHeight*2},
       Color         = {255,255,255},
       FontSize      = 9,
       Font          = TextFont,
@@ -780,33 +813,16 @@ elseif CurrentPage == "Setup" then
       Margin        = 0,
       HTextAlign    = "Center",
       IsReadOnly    = false,
-      ZOrder        = -1700 + i,
+      ZOrder        = -79800 - i,
     }
-    PositionStartX = PositionStartX + 123
-    --------------------------- mute control name
-    layout["Component "..i.." Mute Control Name"] = { 
-      PrettyName    = string.format("Gain %i~Component~Mute Control Name",i),
-      Style         = "ComboBox",
-      Position      = {PositionStartX, PositionStartY},
-      Size          = {120 , StandardHeight},
-      Color         = {255,255,255},
-      FontSize      = 9,
-      Font          = TextFont,
-      FontStyle     = TextFontStyle,
-      TextColor     = ColorBlack,
-      Margin        = 0,
-      HTextAlign    = "Center",
-      IsReadOnly    = false,
-      ZOrder        = -1600 + i,
-    }
-    if DiscreetHasPreamp then
-      PositionStartX = PositionStartX + 123
-      --------------------------- preamp control name
-      layout["Component "..i.." Phantom Control Name"] = { 
-        PrettyName    = string.format("Gain %i~Component~Phantom Control Name",i),
+    PositionStartY  = PositionStartY + StandardHeight
+    --------------------------- Mute Code name
+    if DiscreetMuteComponent then
+      layout["Component "..i.." Mute Code Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Mute Code Name",i),
         Style         = "ComboBox",
         Position      = {PositionStartX, PositionStartY},
-        Size          = {120 , StandardHeight},
+        Size          = {60 , StandardHeight},
         Color         = {255,255,255},
         FontSize      = 9,
         Font          = TextFont,
@@ -815,16 +831,36 @@ elseif CurrentPage == "Setup" then
         Margin        = 0,
         HTextAlign    = "Center",
         IsReadOnly    = false,
-        ZOrder        = -1550+ i,
+        ZOrder        = -79700 - i,
       }
-      PositionStartX = PositionStartX + 123
+    end
+    PositionStartY  = PositionStartY + StandardHeight
+    
+    if DiscreetHasPreamp then
+      --------------------------- preamp control name
+      layout["Component "..i.." Preamp Code Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Preamp Control Name",i),
+        Style         = "ComboBox",
+        Position      = {PositionStartX, PositionStartY},
+        Size          = {60 , StandardHeight*2},
+        Color         = {255,255,255},
+        FontSize      = 9,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        TextColor     = ColorBlack,
+        Margin        = 0,
+        HTextAlign    = "Center",
+        IsReadOnly    = false,
+        ZOrder        = -79600 - i,
+      }  
+      PositionStartY  = PositionStartY + StandardHeight*2    
       for k = 1, 3 do
         --------------------------- Preamp Preset Name
         layout["Gain "..i.." Preamp Preset Name "..k] = { 
           PrettyName    = string.format("Gain %i~Preamp~Preset %i Name",i,k),
           Style         = "Text",
           Position      = {PositionStartX , PositionStartY},
-          Size          = {64 , StandardHeight},
+          Size          = {60 , StandardHeight},
           Color         = {255,255,255},
           FontSize      = 9,
           Font          = TextFont,
@@ -833,25 +869,109 @@ elseif CurrentPage == "Setup" then
           Margin        = 0,
           HTextAlign    = "Center",
           IsReadOnly    = false,
-          ZOrder        = -1450 + i + k,
+          ZOrder        = -79500 - i - k,
         }
-        PositionStartX = PositionStartX + 64
+        PositionStartY  = PositionStartY + StandardHeight
+      end
+    end
+
+    --------------------------- reset positions
+    if i < 7 then
+      PositionStartY = posYMap[1] + StandardHeight
+      PositionStartX = posXMap[i] + 60
+    elseif i < 13 then
+      PositionStartY = posYMap[2] + StandardHeight
+      PositionStartX = posXMap[i - 6] + 60
+    elseif i < 19 then
+      PositionStartY = posYMap[3] + StandardHeight
+      PositionStartX = posXMap[i - 12] + 60
+    else
+      PositionStartY = posYMap[4] + StandardHeight
+      PositionStartX = posXMap[i - 18] + 60
+    end
+
+    --------------------------- gain control name
+    layout["Component "..i.." Gain Control Name"] = { 
+      PrettyName    = string.format("Gain %i~Component~Gain Control Name",i),
+      Style         = "ComboBox",
+      Position      = {PositionStartX, PositionStartY},
+      Size          = {60 , StandardHeight},
+      Color         = {255,255,255},
+      FontSize      = 9,
+      Font          = TextFont,
+      FontStyle     = TextFontStyle,
+      TextColor     = ColorBlack,
+      Margin        = 0,
+      HTextAlign    = "Center",
+      IsReadOnly    = false,
+      ZOrder        = -79400 - i,
+    }
+    PositionStartY  = PositionStartY + StandardHeight  
+    --------------------------- mute control name
+    layout["Component "..i.." Mute Control Name"] = { 
+      PrettyName    = string.format("Gain %i~Component~Mute Control Name",i),
+      Style         = "ComboBox",
+      Position      = {PositionStartX, PositionStartY},
+      Size          = {60 , StandardHeight},
+      Color         = {255,255,255},
+      FontSize      = 9,
+      Font          = TextFont,
+      FontStyle     = TextFontStyle,
+      TextColor     = ColorBlack,
+      Margin        = 0,
+      HTextAlign    = "Center",
+      IsReadOnly    = false,
+      ZOrder        = -79300 - i,
+    }
+    PositionStartY  = PositionStartY + StandardHeight 
+    if DiscreetHasPreamp then  
+      --------------------------- Preamp Control Name
+      layout["Component "..i.." Preamp Control Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Preamp Control Name",i),
+        Style         = "ComboBox",
+        Position      = {PositionStartX, PositionStartY},
+        Size          = {60 , StandardHeight},
+        Color         = {255,255,255},
+        FontSize      = 9,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        TextColor     = ColorBlack,
+        Margin        = 0,
+        HTextAlign    = "Center",
+        IsReadOnly    = false,
+        ZOrder        = -79200 - i,
+      } 
+      PositionStartY  = PositionStartY + StandardHeight 
+      --------------------------- Phantom Control Name
+      layout["Component "..i.." Phantom Control Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Phantom Control Name",i),
+        Style         = "ComboBox",
+        Position      = {PositionStartX, PositionStartY},
+        Size          = {60 , StandardHeight},
+        Color         = {255,255,255},
+        FontSize      = 9,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        TextColor     = ColorBlack,
+        Margin        = 0,
+        HTextAlign    = "Center",
+        IsReadOnly    = false,
+        ZOrder        = -79100 - i,
+      }
+      PositionStartY  = PositionStartY + StandardHeight 
+      for k = 1, 3 do
         --------------------------- Preamp Preset Value
         layout["Gain "..i.." Preamp Preset Value "..k] = {
           PrettyName   = string.format("Gain %i~Preamp~Preset %i Value",i,k),
           Style        = "Text",
           TextBoxStyle = "Meter",
           Position     = {PositionStartX , PositionStartY},
-          Size         = {36,StandardHeight},
+          Size         = {60,StandardHeight},
           Color        = ColorGreen,
-          ZOrder        = -1400 + i + k,
+          ZOrder       = -79000 - i - k,
         }
-        PositionStartX = PositionStartX + 36
-
+        PositionStartY  = PositionStartY + StandardHeight 
       end
-
     end
-
   end
-
 end
