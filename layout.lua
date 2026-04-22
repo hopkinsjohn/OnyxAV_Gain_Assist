@@ -25,15 +25,23 @@ local iMaxGains = math.floor(props["Number Of Gains"].Value)
 local CurrentPage = PageNames[props["page_index"].Value] -- gathers the name of the current page
 
 
-local ShowPreamp = false
-for i = 1, iMaxGains do 
-  if props["Preamp Controls "..i].Value == true then
-    ShowPreamp = true
-  end
-end
+
 
 
 if CurrentPage == "Control" then
+  local ShowAutomix = false
+  local ShowPreamp = false
+  local GroupboxHeight = 428
+  for i = 1, iMaxGains do 
+    if props["Automix Controls "..i].Value == true then
+      ShowAutomix = true
+    end
+    if props["Preamp Controls "..i].Value == true then
+      ShowPreamp = true
+    end
+  end
+  if ShowAutomix then GroupboxHeight = GroupboxHeight + StandardHeight end
+  if ShowPreamp then GroupboxHeight = GroupboxHeight + StandardHeight*4 end
   --------------------------- background groupbox
   table.insert(graphics,{
     Type            = "GroupBox",
@@ -42,7 +50,7 @@ if CurrentPage == "Control" then
     StrokeColor     = GroupBoxStrokeColor,
     StrokeWidth     = 1,
     Position        = {0,0},
-    Size            = {PositionStartX + StandardWidth + (iMaxGains*StandardWidth) + 60, ShowPreamp and 500 or 420},
+    Size            = {PositionStartX + StandardWidth + (iMaxGains*StandardWidth) + 60, GroupboxHeight},
     ZOrder          = -100000,
   })  
   PositionStartY    = PositionStartY + StandardHeight*2
@@ -174,6 +182,24 @@ if CurrentPage == "Control" then
     ZOrder          = -99992,
   })
   PositionStartY    = PositionStartY + StandardHeight
+  if ShowAutomix then
+    --------------------------- Text - Automix
+    table.insert(graphics,{
+      Type            = "Label",
+      Text            = "Automix",
+      Position        = {PositionStartX - 53 , PositionStartY},
+      Size            = {110 , StandardHeight},
+      FontSize        = 11,
+      Margin          = 0,
+      Font            = TextFont,
+      FontStyle       = "Light",
+      Color           = ColorSilver,
+      HTextAlign      = "Right",
+      VTextAlign      = "Center",
+      ZOrder          = -26854,
+    })
+    PositionStartY    = PositionStartY + StandardHeight
+  end
   if ShowPreamp then
     --------------------------- Text - Phantom Power
     table.insert(graphics,{
@@ -226,11 +252,13 @@ if CurrentPage == "Control" then
     ZOrder          = -99989,
   }
   
+  
   for i = 1, iMaxGains do
     -- iterate some variables
     PositionStartX = PositionStartX + StandardWidth
     PositionStartY = 8
     local DiscreetHasPreamp = props["Preamp Controls "..i].Value == true
+    local DiscreetHasAutomix = props["Automix Controls "..i].Value == true
     local DiscreetHasMeter = props["Show Meter "..i].Value == true
     --------------------------- Label - channel index
     layout["Gain "..i.." Index"] = { 
@@ -508,6 +536,40 @@ if CurrentPage == "Control" then
       }
     end
     PositionStartY = PositionStartY + StandardHeight
+    if DiscreetHasAutomix then
+      --------------------------- Automix Toggle
+      layout["Gain "..i.." Automix Toggle"] = {
+        PrettyName    = string.format("Gain %i~Automix~Toggle",i),
+        Style         = "Button",
+        Position      = {PositionStartX , PositionStartY },
+        Size          = {StandardWidth - 16 , StandardHeight},
+        Margin        = 1,
+        CornerRadius  = 0,
+        StrokeWidth   = 0,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        Color         = {0,156,218},
+        ButtonVisualStyle = "Flat",
+        UnlinkOffColor = false,
+        ZOrder        = -96500 - i,
+      }
+      --------------------------- Automix Active led
+      layout["Gain "..i.." Automix Active"] = {
+        PrettyName    = string.format("Gain %i~Automix~Active",i),
+        Style         = "Led",
+        Position      = {PositionStartX + 44 , PositionStartY + 2},
+        Size          = {16 , 16},
+        Margin        = 3,
+        IsReadOnly    = true,
+        Color         = {0,156,218},
+        OffColor      = {0,156,218},
+        UnlinkOffColor = true,
+        ZOrder        = -96400 - i,
+      }
+    end
+    if ShowAutomix then
+      PositionStartY = PositionStartY + StandardHeight
+    end
     if DiscreetHasPreamp then
       --------------------------- Phantom Power Toggle
       layout["Gain "..i.." Preamp Phantom Power Toggle"] = {
@@ -570,54 +632,68 @@ if CurrentPage == "Control" then
 
 elseif CurrentPage == "Setup" then
   -- PositionStartX and PositionStartX mapping
+  local catchAuomixStack = {false,false,false,false}
   local catchPreampStack = {false,false,false,false}
   local posXMap = {86, 214, 342, 470, 598, 726}
-  local posYMap = {13, 73, 133, 193}
-  local sum = 0 
+  local posYMap = {13, 0, 0, 0} -- 2,3,4 are determined below based on [1]
   for i = 1, iMaxGains do 
-    if i <= 6 and props["Preamp Controls "..i].Value == true then
-      catchPreampStack[1] = true
-    elseif i <= 12 and props["Preamp Controls "..i].Value == true then
-      catchPreampStack[2] = true
-    elseif i <= 18 and props["Preamp Controls "..i].Value == true then
-      catchPreampStack[3] = true
-    elseif i <= iMaxGains and props["Preamp Controls "..i].Value == true then
-      catchPreampStack[4] = true
+    if i <= 6 then
+      if props["Automix Controls "..i].Value == true then
+        catchAuomixStack[1] = true
+      end
+      if props["Preamp Controls "..i].Value == true then
+        catchPreampStack[1] = true
+      end
+    elseif i <= 12 then 
+      if props["Automix Controls "..i].Value == true then
+        catchAuomixStack[2] = true
+      end
+      if props["Preamp Controls "..i].Value == true then
+        catchPreampStack[2] = true
+      end
+    elseif i <= 18 then
+      if props["Automix Controls "..i].Value == true then
+        catchAuomixStack[3] = true
+      end
+      if props["Preamp Controls "..i].Value == true then
+        catchPreampStack[3] = true
+      end
+    elseif i <= iMaxGains then
+      if props["Automix Controls "..i].Value == true then
+        catchAuomixStack[4] = true
+      end
+      if props["Preamp Controls "..i].Value == true then
+        catchPreampStack[4] = true
+      end
     end
   end
   -- determine the posYMap based on which rows are using preamp controls
   -------------------------------- row 2
+  posYMap[2] = posYMap[1] + StandardHeight*3
+  if catchAuomixStack[1] then
+    posYMap[2] = posYMap[2] + StandardHeight 
+  end
   if catchPreampStack[1] then
-    posYMap[2] = 173 
+    posYMap[2] = posYMap[2] + StandardHeight*5 
   end
   -------------------------------- row 3
-  for i = 1,2 do 
-    if catchPreampStack[i] == true then
-      sum = sum + 1
-    end
+  posYMap[3] = posYMap[2] + StandardHeight*3
+  if catchAuomixStack[2] then
+    posYMap[3] = posYMap[3] + StandardHeight 
   end
-  if sum == 1 then
-    posYMap[3] = 233
-  elseif sum == 2 then
-    posYMap[3] = 333
+  if catchPreampStack[2] then
+    posYMap[3] = posYMap[3] + StandardHeight*5 
   end
-  sum = 0
   -------------------------------- row 4
-  for i = 1,3 do 
-    if catchPreampStack[i] == true then
-      sum = sum + 1
-    end
+  posYMap[4] = posYMap[3] + StandardHeight*3
+  if catchAuomixStack[3] then
+    posYMap[4] = posYMap[4] + StandardHeight 
   end
-  if sum == 1 then
-    posYMap[4] = 293
-  elseif sum == 2 then
-    posYMap[4] = 393
-  elseif sum == 3 then
-    posYMap[4] = 493
+  if catchPreampStack[3] then
+    posYMap[4] = posYMap[4] + StandardHeight*5 
   end
-  sum = nil
   -- determine groupbox background size
-  local GroupboxHeight = catchPreampStack[4] and (posYMap[4] + StandardHeight*9) or (posYMap[4] + StandardHeight*4)
+
   local GroupboxWidth = 958
   if iMaxGains < 2 then 
     GroupboxWidth = 318
@@ -630,12 +706,25 @@ elseif CurrentPage == "Setup" then
   elseif iMaxGains < 6 then 
     GroupboxWidth = 830
   end
+
+  local adder = 0
+  local GroupboxHeight = 1000
   if iMaxGains < 7 then 
-    GroupboxHeight = catchPreampStack[1] and (posYMap[1] + StandardHeight*9) or (posYMap[1] + StandardHeight*4)
+    if catchAuomixStack[1] then adder = adder + StandardHeight end
+    if catchPreampStack[1] then adder = adder + StandardHeight*5 end
+    GroupboxHeight = posYMap[1] + StandardHeight*4 + adder
   elseif iMaxGains < 13 then 
-    GroupboxHeight = catchPreampStack[2] and (posYMap[2] + StandardHeight*9) or (posYMap[2] + StandardHeight*4)
+    if catchAuomixStack[2] then adder = adder + StandardHeight end
+    if catchPreampStack[2] then adder = adder + StandardHeight*5 end
+    GroupboxHeight = posYMap[2] + StandardHeight*4 + adder
   elseif iMaxGains < 19 then 
-    GroupboxHeight = catchPreampStack[3] and (posYMap[3] + StandardHeight*9) or (posYMap[3] + StandardHeight*4)
+    if catchAuomixStack[3] then adder = adder + StandardHeight end
+    if catchPreampStack[3] then adder = adder + StandardHeight*5 end
+    GroupboxHeight = posYMap[3] + StandardHeight*4 + adder
+  else
+    if catchAuomixStack[4] then adder = adder + StandardHeight end
+    if catchPreampStack[4] then adder = adder + StandardHeight*5 end
+    GroupboxHeight = posYMap[4] + StandardHeight*4 + adder
   end
   --------------------------- background groupbox
   table.insert(graphics,{
@@ -675,20 +764,26 @@ elseif CurrentPage == "Setup" then
   
   
   for i = 1, iMaxGains do
+    local RowIncludesAutomix = false
     if i < 7 then
       PositionStartY = posYMap[1]
       PositionStartX = posXMap[i]
+      RowIncludesAutomix = catchAuomixStack[1]
     elseif i < 13 then
       PositionStartY = posYMap[2]
       PositionStartX = posXMap[i - 6]
+      RowIncludesAutomix = catchAuomixStack[2]
     elseif i < 19 then
       PositionStartY = posYMap[3]
       PositionStartX = posXMap[i - 12]
+      RowIncludesAutomix = catchAuomixStack[3]
     else
       PositionStartY = posYMap[4]
       PositionStartX = posXMap[i - 18]
+      RowIncludesAutomix = catchAuomixStack[4]
     end
     local DiscreetHasPreamp = props["Preamp Controls "..i].Value == true
+    local DiscreetHasAutomix = props["Automix Controls "..i].Value == true
     local DiscreetMuteComponent = props["Link Mute "..i].Value == false
 
     -- left hand text
@@ -699,6 +794,12 @@ elseif CurrentPage == "Setup" then
         [13] = posYMap[3] + StandardHeight,
         [19] = posYMap[4] + StandardHeight,
       }
+      local AutomixGroup = {
+        [1] = catchAuomixStack[1],
+        [7] = catchAuomixStack[2],
+        [13] = catchAuomixStack[3],
+        [19] = catchAuomixStack[4],
+      }
       local PreampGroup = {
         [1] = catchPreampStack[1],
         [7] = catchPreampStack[2],
@@ -706,81 +807,20 @@ elseif CurrentPage == "Setup" then
         [19] = catchPreampStack[4],
       }
       --------------------------- Text - Gain
-      table.insert(graphics,{
-        Type            = "Label",
-        Text            = "Gain",
-        Position        = {posXMap[1] - 80, Ycoord[i]},
-        Size            = {76 , StandardHeight},
-        FontSize        = 8,
-        Margin          = 0,
-        Font            = TextFont,
-        FontStyle       = "Light",
-        Color           = ColorSilver,
-        HTextAlign      = "Right",
-        VTextAlign      = "Center",
-        ZOrder          = -46900 - i,
-      })
+      table.insert(graphics,{Type="Label",Text="Gain",Position={posXMap[1]-80,Ycoord[i]},Size={76,StandardHeight},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46900-i})
       --------------------------- Text - Mute
-      table.insert(graphics,{
-        Type            = "Label",
-        Text            = "Mute",
-        Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight},
-        Size            = {76 , StandardHeight},
-        FontSize        = 8,
-        Margin          = 0,
-        Font            = TextFont,
-        FontStyle       = "Light",
-        Color           = ColorSilver,
-        HTextAlign      = "Right",
-        VTextAlign      = "Center",
-        ZOrder          = -46800 - i,
-      })
+      table.insert(graphics,{Type="Label",Text="Mute",Position={posXMap[1]-80,Ycoord[i]+StandardHeight},Size={76,StandardHeight},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46800-i})
+      if AutomixGroup[i] then
+        --------------------------- Text - Preamp Gain
+        table.insert(graphics,{Type="Label",Text="Automix Manual",Position={posXMap[1]-80,Ycoord[i]+StandardHeight*2},Size={76,StandardHeight},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46700-i})
+      end
       if PreampGroup[i] then
         --------------------------- Text - Preamp Gain
-        table.insert(graphics,{
-          Type            = "Label",
-          Text            = "Preamp Gain",
-          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*2},
-          Size            = {76 , StandardHeight},
-          FontSize        = 8,
-          Margin          = 0,
-          Font            = TextFont,
-          FontStyle       = "Light",
-          Color           = ColorSilver,
-          HTextAlign      = "Right",
-          VTextAlign      = "Center",
-          ZOrder          = -46700 - i,
-        })
+        table.insert(graphics,{Type="Label",Text="Preamp Gain",Position={posXMap[1]-80,AutomixGroup[i] and (Ycoord[i]+StandardHeight*3) or (Ycoord[i]+StandardHeight*2)},Size={76,StandardHeight},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46600-i})
         --------------------------- Text - Preamp Phantom
-        table.insert(graphics,{
-          Type            = "Label",
-          Text            = "Preamp Phantom",
-          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*3},
-          Size            = {76 , StandardHeight},
-          FontSize        = 8,
-          Margin          = 0,
-          Font            = TextFont,
-          FontStyle       = "Light",
-          Color           = ColorSilver,
-          HTextAlign      = "Right",
-          VTextAlign      = "Center",
-          ZOrder          = -46600 - i,
-        })
+        table.insert(graphics,{Type="Label",Text="Preamp Phantom",Position={posXMap[1]-80,AutomixGroup[i] and (Ycoord[i]+StandardHeight*4) or (Ycoord[i]+StandardHeight*3)},Size={76,StandardHeight},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46500-i})
         --------------------------- Text - Preamp Presets
-        table.insert(graphics,{
-          Type            = "Label",
-          Text            = "Preamp Presets",
-          Position        = {posXMap[1] - 80, Ycoord[i] + StandardHeight*4},
-          Size            = {76 , StandardHeight*3},
-          FontSize        = 8,
-          Margin          = 0,
-          Font            = TextFont,
-          FontStyle       = "Light",
-          Color           = ColorSilver,
-          HTextAlign      = "Right",
-          VTextAlign      = "Center",
-          ZOrder          = -46500 - i,
-        })
+        table.insert(graphics,{Type="Label",Text="Preamp Presets",Position={posXMap[1]-80,AutomixGroup[i] and (Ycoord[i]+StandardHeight*5) or (Ycoord[i]+StandardHeight*4)},Size={76,StandardHeight*3},FontSize=8,Margin=0,Font=TextFont,FontStyle="Light",Color=ColorSilver,HTextAlign="Right",VTextAlign="Center",ZOrder=-46400-i})
       end
     end
 
@@ -835,11 +875,32 @@ elseif CurrentPage == "Setup" then
       }
     end
     PositionStartY  = PositionStartY + StandardHeight
-    
+    if DiscreetHasAutomix then
+      --------------------------- Automix Code Name
+      layout["Component "..i.." Automix Code Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Automix Code Name",i),
+        Style         = "ComboBox",
+        Position      = {PositionStartX, PositionStartY},
+        Size          = {60 , StandardHeight},
+        Color         = {255,255,255},
+        FontSize      = 9,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        TextColor     = ColorBlack,
+        Margin        = 0,
+        HTextAlign    = "Center",
+        IsReadOnly    = false,
+        ZOrder        = -53500 - i,
+      }  
+      
+    end
+    if RowIncludesAutomix then
+      PositionStartY  = PositionStartY + StandardHeight 
+    end
     if DiscreetHasPreamp then
-      --------------------------- preamp control name
+      --------------------------- Preamp Code name
       layout["Component "..i.." Preamp Code Name"] = { 
-        PrettyName    = string.format("Gain %i~Component~Preamp Control Name",i),
+        PrettyName    = string.format("Gain %i~Component~Preamp Code Name",i),
         Style         = "ComboBox",
         Position      = {PositionStartX, PositionStartY},
         Size          = {60 , StandardHeight*2},
@@ -924,6 +985,29 @@ elseif CurrentPage == "Setup" then
       ZOrder        = -79300 - i,
     }
     PositionStartY  = PositionStartY + StandardHeight 
+
+    if DiscreetHasAutomix then  
+      --------------------------- Automix Control Name
+      layout["Component "..i.." Automix Control Name"] = { 
+        PrettyName    = string.format("Gain %i~Component~Automix Control Name",i),
+        Style         = "ComboBox",
+        Position      = {PositionStartX, PositionStartY},
+        Size          = {60 , StandardHeight},
+        Color         = {255,255,255},
+        FontSize      = 9,
+        Font          = TextFont,
+        FontStyle     = TextFontStyle,
+        TextColor     = ColorBlack,
+        Margin        = 0,
+        HTextAlign    = "Center",
+        IsReadOnly    = false,
+        ZOrder        = -54300 - i,
+      } 
+    end
+    if RowIncludesAutomix then
+      PositionStartY  = PositionStartY + StandardHeight 
+    end
+
     if DiscreetHasPreamp then  
       --------------------------- Preamp Control Name
       layout["Component "..i.." Preamp Control Name"] = { 

@@ -145,6 +145,21 @@ for i = 1, iMaxGains do
     UserPin         = false,
     PinStyle        = "Input"
   }) 
+  ------------------------------- automix toggle
+  table.insert(ctrls, {
+    Name            = "Gain "..i.." Automix Toggle",
+    ControlType     = "Button",
+    ButtonType      = "Toggle",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
+  ------------------------------- automix on led
+  table.insert(ctrls, {             
+    Name            = "Gain "..i.." Automix Active",
+    ControlType     = "Indicator",
+    IndicatorType   = "Led",
+    UserPin         = false,
+  }) 
   ------------------------------- phantom power toggle
   table.insert(ctrls, {
     Name            = "Gain "..i.." Preamp Phantom Power Toggle",
@@ -220,6 +235,13 @@ for i = 1, iMaxGains do
     UserPin         = true,
     PinStyle        = "Both",
   })
+  ------------------------------- Automix Code name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Automix Code Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
   ------------------------------- Preamp Code name
   table.insert(ctrls, {             
     Name            = "Component "..i.." Preamp Code Name",
@@ -241,6 +263,13 @@ for i = 1, iMaxGains do
     UserPin         = true,
     PinStyle        = "Both",
   })
+  ------------------------------- Automix control name
+  table.insert(ctrls, {             
+    Name            = "Component "..i.." Automix Control Name",
+    ControlType     = "Text",
+    UserPin         = true,
+    PinStyle        = "Both",
+  })
   ------------------------------- preamp control name
   table.insert(ctrls, {             
     Name            = "Component "..i.." Preamp Control Name",
@@ -255,6 +284,8 @@ for i = 1, iMaxGains do
     UserPin         = true,
     PinStyle        = "Both",
   })
+  local DefaultPreampText = {"Mic High","Mic Low","Line"}
+  local DefaultPreampValues = {46,26,0}
   for k = 1,3 do
     ------------------------------- preamp presets
     table.insert(ctrls, {
@@ -270,8 +301,9 @@ for i = 1, iMaxGains do
       ControlType   = "Text",
       UserPin       = true,
       PinStyle      = "Both",
+      DefaultValue = DefaultPreampText[k],
     })
-    ------------------------------- gain fader
+    ------------------------------- Preamp Preset Value
     table.insert(ctrls, {             
       Name          = "Gain "..i.." Preamp Preset Value "..k,
       ControlType   = "Knob",
@@ -280,6 +312,7 @@ for i = 1, iMaxGains do
       Max           = 100,
       UserPin       = true,
       PinStyle      = "Both",
+      DefaultValue = DefaultPreampValues[k],
     })
   end
 

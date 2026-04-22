@@ -43,6 +43,11 @@ for i = 1, maximumsize do
     Value = false,
   })
   table.insert(props, {
+    Name = "Automix Controls "..i,
+    Type = "boolean",
+    Value = false,
+  })
+  table.insert(props, {
     Name = "Preamp Controls "..i,
     Type = "boolean",
     Value = false,

@@ -5,6 +5,7 @@ for i = 2, maximumsize do
   props["Min dB "..i].IsHidden = true
   props["Link Mute "..i].IsHidden = true
   props["Show Meter "..i].IsHidden = true
+  props["Automix Controls "..i].IsHidden = true
   props["Preamp Controls "..i].IsHidden = true
 end
 
@@ -14,6 +15,7 @@ if props["Number Of Gains"].Value > 1 then
     props["Min dB "..i].IsHidden = false
     props["Link Mute "..i].IsHidden = false
     props["Show Meter "..i].IsHidden = false
+    props["Automix Controls "..i].IsHidden = false
     props["Preamp Controls "..i].IsHidden = false
   end
 end
