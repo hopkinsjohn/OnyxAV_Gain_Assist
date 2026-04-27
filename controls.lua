@@ -2,7 +2,7 @@
 
 
 -- RUNTIME CODE input pin (comment this out when runtime has been added to this plugin)
-table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = false,PinStyle = "Input",Count = 1})
+--table.insert(ctrls,{Name = "code",ControlType = "Text",UserPin = false,PinStyle = "Input",Count = 1})
 
 -----------------------------------------------------
 -------------------- Variables ----------------------

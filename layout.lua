@@ -1,6 +1,6 @@
 
 -- RUNTIME CODE input pin (comment this out when runtime has been added to this plugin)
-layout["code"]={PrettyName="code",Style="None"}
+--layout["code"]={PrettyName="code",Style="None"}
 
 -----------------------------------------------------
 -------------------- Variables ----------------------

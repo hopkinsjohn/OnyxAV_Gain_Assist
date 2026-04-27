@@ -12,7 +12,8 @@ end
 
 -- The name that will initially display when dragged into a design
 function GetPrettyName(props)
-  return "Gain Assist v2, version " .. PluginInfo.BuildVersion
+  --return string.format("OAV Gain Assist v2.1", string.match(PluginInfo.BuildVersion, "%.(%d+)$"))
+  return "OAV Gain Assist v2.1"
 end
 
 -- Optional function used if plugin has multiple pages
