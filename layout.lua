@@ -279,7 +279,7 @@ if CurrentPage == "Control" then
     PositionStartY = PositionStartY + StandardHeight
     --------------------------- Invisible Toggle
     layout["Gain "..i.." Invisible"] = {
-      PrettyName    = string.format("Gain %i~Visible",i),
+      PrettyName    = string.format("Gain %i~Invisible",i),
       Style         = "Button",
       Position      = {PositionStartX , PositionStartY},
       Size          = {StandardWidth/2 , StandardHeight},
