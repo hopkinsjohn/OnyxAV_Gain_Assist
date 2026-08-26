@@ -1032,21 +1032,56 @@ end
 
 
 
+local INITIALIZATION_DELAY = 0.3
+local InitializationComplete = false
+
+local function InitializeGain(idx)
+  print("Initialize Gain | "..idx)
+  -- All gains have been initialized
+  if idx > iMaxGains then
+    InitializationComplete = true
+    print("Gain initialization complete")
+    print(PluginInfo.Name.." V"..PluginInfo.Version.." Build "..PluginInfo.BuildVersion)
+    return
+  end
+
+  Controls["Gain "..idx.." Index"].String = tostring(idx)
+
+  funcSetUpGain(idx)
+
+  if Properties["Link Mute "..idx].Value == false then
+    funcSetUpMute(idx)
+  end
+
+  funcSetUpAutomix(idx)
+  funcSetUpPreamp(idx)
+  SyncNames(idx)
+  SyncPreampLegends(idx)
+  funcInsibilityControl(idx)
+
+  -- Schedule the next gain as a new execution
+  Timer.CallAfter(function()
+      InitializeGain(idx + 1)
+    end, INITIALIZATION_DELAY
+  )
+end
+
+
+
 function Init()
   print(PluginInfo.Name.." V"..PluginInfo.Version.." Build "..PluginInfo.BuildVersion)
   DebugPrint = Properties["plugin_show_debug"].Value == true
   funcGetComponents()
-  for idx = 1, iMaxGains do 
-    Controls["Gain "..idx.." Index"].String = tostring(idx)
-    funcSetUpGain(idx)
-    if Properties["Link Mute "..idx].Value == false then funcSetUpMute(idx) end
-    funcSetUpAutomix(idx)
-    funcSetUpPreamp(idx)
-    SyncNames(idx)
-    SyncPreampLegends(idx)
-    funcInsibilityControl(idx)
-  end 
-  
+  InitializationComplete = false
+  print("This is the correct runtime.")
+
+  -- Start asynchronously so Init() can finish first
+  Timer.CallAfter(function()
+      InitializeGain(1)
+    end,
+    INITIALIZATION_DELAY
+  )
+ 
 end 
 Init()
 
